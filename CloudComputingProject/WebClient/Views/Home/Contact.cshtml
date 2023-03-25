@@ -1,17 +1,30 @@
-﻿@{
-    ViewData["Title"] = "Contact";
+﻿@model IEnumerable<Common.PlannedWork>
+
+@if (ViewData["Contact"] != null)
+{
+    <h1 style="color:blue">@ViewData["Title"]</h1>
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
-
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
-
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+</br>
+</br>
+</br>
+<meta http-equiv="refresh" content="4" />
+<table class="table table-responsive table-hover" style=" background-color:aliceblue; border:thin; border-color:aquamarine; border-radius:9px; border-width:1px;">
+    <caption style="text-align:center; background-color:aliceblue; border:thin; border-color:aquamarine; border-radius:9px; border-width:1px; font-family:'Comic Sans MS', Times, serif; font-style:italic; opacity:0.8; font-weight:500; color:black; font-size:19pt">List of all planned works on airplanes</caption>
+    <tr>
+        <th>Id of current work </th>
+        <th>Airport</th>
+        <th>Type of Airport</th>
+        <th>Details of work</th>
+        <th>Work steps</th>
+    </tr>
+    @foreach (var m in Model)
+    {
+        <tr>
+            <td>@m.IdCurrentWork</td>
+            <td>@m.Airport</td>
+            <td>@m.TypeOfAirport</td>
+            <td>@m.DetailsOfWorks</td>
+            <td>@m.WorkSteps</td>
+        </tr>
+    }
+</table>
