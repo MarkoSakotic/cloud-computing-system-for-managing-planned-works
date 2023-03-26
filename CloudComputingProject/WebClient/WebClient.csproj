@@ -23,4 +23,8 @@
     <ProjectReference Include="..\ReportWorkService\ReportWorkService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>
