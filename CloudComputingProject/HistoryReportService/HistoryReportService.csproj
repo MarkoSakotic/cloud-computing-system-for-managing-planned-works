@@ -134,6 +134,7 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HistoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HistoryReportService.cs" />
     <Compile Include="Program.cs" />

@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IHistoryService.cs" />
     <Compile Include="IReportWorkService.cs" />
     <Compile Include="PlannedWork.cs" />
     <Compile Include="PlannedWorkTable.cs" />

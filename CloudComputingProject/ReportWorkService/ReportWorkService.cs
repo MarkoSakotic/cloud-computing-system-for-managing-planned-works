@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Fabric;
 using System.Fabric.Description;
 using System.Linq;
@@ -11,6 +12,8 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace ReportWorkService
 {
@@ -70,6 +73,8 @@ namespace ReportWorkService
 
             var CurrentReportActive = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
 
+            await ReadFromTable();
+
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -88,7 +93,76 @@ namespace ReportWorkService
                     await tx.CommitAsync();
                 }
 
+                AddToTable();
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            }
+        }
+
+
+        public async Task ReadFromTable()
+        {
+            try
+            {
+                CloudStorageAccount _storageAccount;
+                CloudTable _table;
+                string appSettingString = ConfigurationManager.AppSettings["HistoryConnectionString"];
+                _storageAccount = CloudStorageAccount.Parse(appSettingString);
+                CloudTableClient tableCloudClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
+                _table = tableCloudClient.GetTableReference("CurrentWorkDataStorage");
+
+                var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentPlannedWorkData" && !pwt.ArchivedData select pwt;
+
+                if (results.ToList().Count > 0)
+                {
+                    var CurrentReportData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentWorkActiveData");
+                    using (var tx = this.StateManager.CreateTransaction())
+                    {
+                        foreach (PlannedWorkTable currentReport in results.ToList())
+                        {
+                            await CurrentReportData.TryAddAsync(tx, currentReport.RowKey, new PlannedWork(currentReport.RowKey, currentReport.Airport, currentReport.TypeOfAirport, currentReport.DetailsOfWorks, currentReport.WorkSteps));
+                        }
+                        await tx.CommitAsync();
+                    }
+                }
+            }
+            catch
+            {
+                ServiceEventSource.Current.Message("There is no created cloud!");
+            }
+        }
+
+        public async Task AddToTable()
+        {
+            List<PlannedWorkTable> plannedWorkTableEntities = new List<PlannedWorkTable>();
+            var CurrentWorkActiveData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentWorkActiveData");
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var enumerator = (await CurrentWorkActiveData.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+                while (await enumerator.MoveNextAsync(new System.Threading.CancellationToken()))
+                {
+                    PlannedWork plannedWork = (await CurrentWorkActiveData.TryGetValueAsync(tx, enumerator.Current.Key)).Value;
+                    plannedWorkTableEntities.Add(new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, false));
+                }
+            }
+
+            try
+            {
+                CloudStorageAccount _storageAccount;
+                CloudTable _table;
+                string appSettingString = ConfigurationManager.AppSettings["HistoryConnectionString"];
+                _storageAccount = CloudStorageAccount.Parse(appSettingString);
+                CloudTableClient tableClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
+                _table = tableClient.GetTableReference("CurrentWorkDataStorage");
+                foreach (PlannedWorkTable plannedWorkTable in plannedWorkTableEntities)
+                {
+                    TableOperation insertOperation = TableOperation.InsertOrReplace(plannedWorkTable);
+                    _table.Execute(insertOperation);
+                }
+            }
+            catch
+            {
+                ServiceEventSource.Current.Message("There is no created cloud!");
             }
         }
     }

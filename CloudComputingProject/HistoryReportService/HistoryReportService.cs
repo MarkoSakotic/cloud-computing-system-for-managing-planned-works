@@ -52,6 +52,8 @@ namespace HistoryReportService
 
                 ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
 
+                await GetDataFromCurrentWork();
+
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
@@ -87,17 +89,18 @@ namespace HistoryReportService
                     _table = tableClient.GetTableReference("CurrentReportData");
                     foreach (PlannedWork plannedWork in plannedWorks)
                     {
-                        PlannedWorkTable plannedWorkTable = new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps);
+                        PlannedWorkTable plannedWorkTable = new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, true);
                         TableOperation insertOperation = TableOperation.InsertOrReplace(plannedWorkTable);
                         _table.Execute(insertOperation);
                     }
-
+                    bool tempBool = false;
                     for (int i = 0; i < partitionsNumber; i++)
                     {
                         ServicePartitionClient<WcfCommunicationClient<IReportWorkService>> servicePartitionClient2 = new ServicePartitionClient<WcfCommunicationClient<IReportWorkService>>(
                             new WcfCommunicationClientFactory<IReportWorkService>(clientBinding: binding),
                             new Uri("fabric:/CloudComputingProject/ReportWorkService"),
                             new ServicePartitionKey(index2 % partitionsNumber));
+                        tempBool = await servicePartitionClient2.InvokeWithRetryAsync(client => client.Channel.DeleteAllData());
                         index2++;
                     }
 

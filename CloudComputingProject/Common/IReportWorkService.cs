@@ -15,5 +15,12 @@ namespace Common
 
         [OperationContract]
         Task<List<PlannedWork>> GetAllData();
+
+        [OperationContract]
+        Task<List<PlannedWork>> GetAllDataHistory();
+
+        [OperationContract]
+        Task<bool> DeleteAllData();
+
     }
 }
