@@ -32,6 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HistoryReportService\HistoryReportService.csproj" />
     <ProjectReference Include="..\ReportWorkService\ReportWorkService.csproj" />
     <ProjectReference Include="..\WebClient\WebClient.csproj">
       <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>

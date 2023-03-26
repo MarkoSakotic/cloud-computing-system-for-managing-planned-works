@@ -5,11 +5,13 @@ VisualStudioVersion = 15.0.28307.1738
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "CloudComputingProject", "CloudComputingProject\CloudComputingProject.sfproj", "{F6340D38-823A-47D9-BCD3-35BBAB98A891}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{EC5F6E34-5F68-483B-85B6-9865F778FFBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebClient", "WebClient\WebClient.csproj", "{EC5F6E34-5F68-483B-85B6-9865F778FFBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{B747DCD1-A075-4531-B0E6-01ADE167BAC4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWorkService", "ReportWorkService\ReportWorkService.csproj", "{69E3844F-89E8-450A-9FA3-2B3278525592}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoryReportService", "HistoryReportService\HistoryReportService.csproj", "{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,12 @@ Global
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|Any CPU.ActiveCfg = Release|x64
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|x64.ActiveCfg = Release|x64
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|x64.Build.0 = Release|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|x64.ActiveCfg = Debug|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|x64.Build.0 = Debug|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|Any CPU.ActiveCfg = Release|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|x64.ActiveCfg = Release|x64
+		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
