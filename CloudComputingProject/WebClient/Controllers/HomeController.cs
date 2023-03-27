@@ -64,7 +64,7 @@ namespace WebClient.Controllers
 
         [HttpPost]
         [Route("/HomeController/AddPlannedWork")]
-        public async Task<IActionResult> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps)
+        public async Task<IActionResult> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps, DateTime dateOfRepairWork)
         {
 
             try
@@ -80,7 +80,7 @@ namespace WebClient.Controllers
                         new WcfCommunicationClientFactory<IReportWorkService>(clientBinding: binding),
                         new Uri("fabric:/CloudComputingProject/ReportWorkService"),
                         new ServicePartitionKey(index % partitionsNumber));
-                    result = await servicePartitionClient.InvokeWithRetryAsync(client => client.Channel.AddPlannedWork(idCurrentWork, airport, typeOfAirport, detailsOfWorks, workSteps));
+                    result = await servicePartitionClient.InvokeWithRetryAsync(client => client.Channel.AddPlannedWork(idCurrentWork, airport, typeOfAirport, detailsOfWorks, workSteps, dateOfRepairWork));
                     index++;
                 }
 

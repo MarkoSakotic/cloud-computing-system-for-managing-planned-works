@@ -208,7 +208,7 @@ namespace HistoryReportService
                     _table = tableClient.GetTableReference("CurrentReportData");
                     foreach (PlannedWork plannedWork in plannedWorks)
                     {
-                        PlannedWorkTable plannedWorkTable = new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, true);
+                        PlannedWorkTable plannedWorkTable = new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, plannedWork.DateOfRepairWork, true);
                         TableOperation insertOperation = TableOperation.InsertOrReplace(plannedWorkTable);
                         _table.Execute(insertOperation);
                     }

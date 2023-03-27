@@ -10,22 +10,24 @@
 </br>
 <meta http-equiv="refresh" content="4" />
 <table class="table table-striped" style="background-color:aliceblue; opacity:0.9; border-collapse:separate; border-spacing:0.85em; font-family:'Comic Sans MS', Times, serif; border-radius:12px; border-width:1px">
-    <tr>
-        <th>ID </th>
-        <th>Location</th>
-        <th>Start date</th>
-        <th>End date</th>
-        <th>Description</th>
-    </tr>
-    @foreach (var m in Model)
-    {
         <tr>
-            <td>@m.IdCurrentWork</td>
-            <td>@m.Airport</td>
-            <td>@m.TypeOfAirport</td>
-            <td>@m.DetailsOfWorks</td>
-            <td>@m.WorkSteps</td>
+            <th style="color:grey">Id of current work </th>
+            <th style="color:grey">Airport</th>
+            <th style="color:grey">Type of Airport</th>
+            <th style="color:grey">Details of work</th>
+            <th style="color:grey">Work steps</th>
+            <th style="color:grey">Date of repair work></th>
         </tr>
-    }
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td style="color:grey">@m.IdCurrentWork</td>
+                <td style="color:grey">@m.Airport</td>
+                <td style="color:grey">@m.TypeOfAirport</td>
+                <td style="color:grey">@m.DetailsOfWorks</td>
+                <td style="color:grey">@m.WorkSteps</td>
+                <td style="color:grey">@m.DateOfRepairWork</td>
+            </tr>
+        }
 </table>
     -->

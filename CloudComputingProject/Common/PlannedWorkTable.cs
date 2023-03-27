@@ -14,6 +14,7 @@ namespace Common
         public string TypeOfAirport { get; set; }
         public string DetailsOfWorks { get; set; }
         public string WorkSteps { get; set; }
+        public DateTime DateOfRepairWork { get; set; }
         public Boolean ArchivedData { get; set; }
 
         public PlannedWorkTable()
@@ -21,7 +22,7 @@ namespace Common
 
         }
 
-        public PlannedWorkTable(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWork, string workSteps, bool archivedData)
+        public PlannedWorkTable(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWork, string workSteps, DateTime dateOfRepairWork, bool archivedData)
         {
             RowKey = idCurrentWork;
             PartitionKey = "CurrentPlannedWorkData";
@@ -31,6 +32,7 @@ namespace Common
             TypeOfAirport = typeOfAirport;
             DetailsOfWorks = detailsOfWork;
             WorkSteps = workSteps;
+            DateOfRepairWork = dateOfRepairWork;
             ArchivedData = archivedData;
         }
     }

@@ -26,13 +26,13 @@ namespace ReportWorkService
         }
 
 
-        public async Task<bool> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps)
+        public async Task<bool> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps, DateTime dateOfRepairWork)
         {
             bool result = true;
             CurrentReportDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
             using (var tx = this.StateManager.CreateTransaction())
             {
-                result = await CurrentReportDictionary.TryAddAsync(tx, idCurrentWork, new PlannedWork(idCurrentWork, airport, typeOfAirport, detailsOfWorks, workSteps));
+                result = await CurrentReportDictionary.TryAddAsync(tx, idCurrentWork, new PlannedWork(idCurrentWork, airport, typeOfAirport, detailsOfWorks, workSteps, dateOfRepairWork));
                 await tx.CommitAsync();
             }
 

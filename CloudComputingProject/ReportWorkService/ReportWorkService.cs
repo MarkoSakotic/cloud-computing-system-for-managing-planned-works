@@ -119,7 +119,7 @@ namespace ReportWorkService
                     {
                         foreach (PlannedWorkTable currentReport in results.ToList())
                         {
-                            await CurrentReportData.TryAddAsync(tx, currentReport.RowKey, new PlannedWork(currentReport.RowKey, currentReport.Airport, currentReport.TypeOfAirport, currentReport.DetailsOfWorks, currentReport.WorkSteps));
+                            await CurrentReportData.TryAddAsync(tx, currentReport.RowKey, new PlannedWork(currentReport.RowKey, currentReport.Airport, currentReport.TypeOfAirport, currentReport.DetailsOfWorks, currentReport.WorkSteps, currentReport.DateOfRepairWork));
                         }
                         await tx.CommitAsync();
                     }
@@ -142,7 +142,7 @@ namespace ReportWorkService
                 while (await enumerator.MoveNextAsync(new System.Threading.CancellationToken()))
                 {
                     PlannedWork plannedWork = (await CurrentWorkActiveData.TryGetValueAsync(tx, enumerator.Current.Key)).Value;
-                    plannedWorkTableEntities.Add(new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, false));
+                    plannedWorkTableEntities.Add(new PlannedWorkTable(plannedWork.IdCurrentWork, plannedWork.Airport, plannedWork.TypeOfAirport, plannedWork.DetailsOfWorks, plannedWork.WorkSteps, plannedWork.DateOfRepairWork, false));
                 }
             }
 

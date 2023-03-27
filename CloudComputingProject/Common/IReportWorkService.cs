@@ -11,7 +11,7 @@ namespace Common
     public interface IReportWorkService
     {
         [OperationContract]
-        Task<bool> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps);
+        Task<bool> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps, DateTime dateOfRepairWork);
 
         [OperationContract]
         Task<List<PlannedWork>> GetAllData();
