@@ -93,7 +93,7 @@ namespace ReportWorkService
                     await tx.CommitAsync();
                 }
 
-                AddToTable();
+                await AddToTable();
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
@@ -105,16 +105,16 @@ namespace ReportWorkService
             {
                 CloudStorageAccount _storageAccount;
                 CloudTable _table;
-                string appSettingString = ConfigurationManager.AppSettings["HistoryConnectionString"];
+                string appSettingString = ConfigurationManager.AppSettings["DataConnectionString"];
                 _storageAccount = CloudStorageAccount.Parse(appSettingString);
                 CloudTableClient tableCloudClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
-                _table = tableCloudClient.GetTableReference("CurrentWorkDataStorage");
+                _table = tableCloudClient.GetTableReference("WorkDataStorage");
 
                 var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentPlannedWorkData" && !pwt.ArchivedData select pwt;
 
                 if (results.ToList().Count > 0)
                 {
-                    var CurrentReportData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentWorkActiveData");
+                    var CurrentReportData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
                     using (var tx = this.StateManager.CreateTransaction())
                     {
                         foreach (PlannedWorkTable currentReport in results.ToList())
@@ -134,7 +134,7 @@ namespace ReportWorkService
         public async Task AddToTable()
         {
             List<PlannedWorkTable> plannedWorkTableEntities = new List<PlannedWorkTable>();
-            var CurrentWorkActiveData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentWorkActiveData");
+            var CurrentWorkActiveData = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
 
             using (var tx = this.StateManager.CreateTransaction())
             {
@@ -150,10 +150,10 @@ namespace ReportWorkService
             {
                 CloudStorageAccount _storageAccount;
                 CloudTable _table;
-                string appSettingString = ConfigurationManager.AppSettings["HistoryConnectionString"];
+                string appSettingString = ConfigurationManager.AppSettings["DataConnectionString"];
                 _storageAccount = CloudStorageAccount.Parse(appSettingString);
                 CloudTableClient tableClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
-                _table = tableClient.GetTableReference("CurrentWorkDataStorage");
+                _table = tableClient.GetTableReference("WorkDataStorage");
                 foreach (PlannedWorkTable plannedWorkTable in plannedWorkTableEntities)
                 {
                     TableOperation insertOperation = TableOperation.InsertOrReplace(plannedWorkTable);

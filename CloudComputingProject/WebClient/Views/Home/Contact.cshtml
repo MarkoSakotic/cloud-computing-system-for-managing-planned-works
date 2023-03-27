@@ -9,24 +9,24 @@
 </br>
 <meta http-equiv="refresh" content="4" />
 <body style="background-repeat:no-repeat; background-size:cover;">
-<table class="table table-striped" style="background-color:aliceblue; opacity:0.9; border-collapse:separate; border-spacing:0.85em; font-family:'Comic Sans MS', Times, serif; border-radius:12px; border-width:1px">
-    <caption style="text-align:center; background-color:aliceblue; border:thin; border-color:aquamarine; border-radius:9px; border-width:1px; font-family:'Comic Sans MS', Times, serif; font-style:italic; opacity:0.8; font-weight:500; color:lightslategrey; font-size:19pt">List of all planned works on airplanes</caption>
-    <tr>
-        <th style="color:grey">Id of current work </th>
-        <th style="color:grey">Airport</th>
-        <th style="color:grey">Type of Airport</th>
-        <th style="color:grey">Details of work</th>
-        <th style="color:grey">Work steps</th>
-    </tr>
-    @foreach (var m in Model)
-    {
+    <table class="table table-striped" style="background-color:aliceblue; opacity:0.9; border-collapse:separate; border-spacing:0.85em; font-family:'Comic Sans MS', Times, serif; border-radius:12px; border-width:1px">
+        <caption style="text-align:center; background-color:aliceblue; border:thin; border-color:aquamarine; border-radius:9px; border-width:1px; font-family:'Comic Sans MS', Times, serif; font-style:italic; opacity:0.8; font-weight:500; color:lightslategrey; font-size:19pt">List of all planned works on airplanes</caption>
         <tr>
-            <td style="color:grey">@m.IdCurrentWork</td>
-            <td style="color:grey">@m.Airport</td>
-            <td style="color:grey">@m.TypeOfAirport</td>
-            <td style="color:grey">@m.DetailsOfWorks</td>
-            <td style="color:grey">@m.WorkSteps</td>
+            <th style="color:grey">Id of current work </th>
+            <th style="color:grey">Airport</th>
+            <th style="color:grey">Type of Airport</th>
+            <th style="color:grey">Details of work</th>
+            <th style="color:grey">Work steps</th>
         </tr>
-    }
-</table>
- </body>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td style="color:grey">@m.IdCurrentWork</td>
+                <td style="color:grey">@m.Airport</td>
+                <td style="color:grey">@m.TypeOfAirport</td>
+                <td style="color:grey">@m.DetailsOfWorks</td>
+                <td style="color:grey">@m.WorkSteps</td>
+            </tr>
+        }
+    </table>
+</body>

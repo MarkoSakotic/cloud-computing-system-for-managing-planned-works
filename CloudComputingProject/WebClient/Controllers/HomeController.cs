@@ -12,6 +12,7 @@ using Microsoft.ServiceFabric.Services.Communication.Wcf;
 using ReportWorkService;
 using WebClient.Models;
 using Common;
+using System.ServiceModel;
 
 namespace WebClient.Controllers
 {
@@ -22,19 +23,45 @@ namespace WebClient.Controllers
             return View();
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
         }
 
-        
+
+        public async Task<IActionResult> About()
+        {
+            ViewData["About"] = null;
+            List<PlannedWork> currentWorks = new List<PlannedWork>();
+
+            var myBinding = new NetTcpBinding(SecurityMode.None);
+            var myEndpoint = new EndpointAddress("net.tcp://localhost:6001/HistoryWorkSaverEndpoint");
+
+            using (var myChannelFactory = new ChannelFactory<IHistoryService>(myBinding, myEndpoint))
+            {
+                IHistoryService clientService = null;
+                try
+                {
+                    clientService = myChannelFactory.CreateChannel();
+                    currentWorks = clientService.GetAllHistoryFromStorage();
+                    ((ICommunicationObject)clientService).Close();
+                    myChannelFactory.Close();
+
+                    return View(currentWorks);
+                }
+                catch
+                {
+                    (clientService as ICommunicationObject)?.Abort();
+
+                    ViewData["About"] = "Service is currently unavailable!";
+                    return View();
+                }
+
+            }
+        }
+
+
+
         [HttpPost]
         [Route("/HomeController/AddPlannedWork")]
         public async Task<IActionResult> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps)
