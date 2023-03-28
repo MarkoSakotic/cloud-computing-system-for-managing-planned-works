@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWorkService", "ReportWorkService\ReportWorkService.csproj", "{69E3844F-89E8-450A-9FA3-2B3278525592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoryReportService", "HistoryReportService\HistoryReportService.csproj", "{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoryReportService", "HistoryReportService\HistoryReportService.csproj", "{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,12 +51,12 @@ Global
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|Any CPU.ActiveCfg = Release|x64
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|x64.ActiveCfg = Release|x64
 		{69E3844F-89E8-450A-9FA3-2B3278525592}.Release|x64.Build.0 = Release|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|x64.ActiveCfg = Debug|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Debug|x64.Build.0 = Debug|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|Any CPU.ActiveCfg = Release|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|x64.ActiveCfg = Release|x64
-		{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}.Release|x64.Build.0 = Release|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Debug|x64.ActiveCfg = Debug|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Debug|x64.Build.0 = Debug|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Release|Any CPU.ActiveCfg = Release|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Release|x64.ActiveCfg = Release|x64
+		{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

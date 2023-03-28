@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace HistoryReportService
 {
-    /*
     public class HistoryService : IHistoryService
     {
         public HistoryService()
@@ -30,14 +29,9 @@ namespace HistoryReportService
             var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentPlannedWorkData" && pwt.ArchivedData select pwt;
             foreach (PlannedWorkTable plannedWorkTable in results.ToList())
             {
-                plannedWorks.Add(new PlannedWork(plannedWorkTable.IdCurrentWork, plannedWorkTable.Airport, plannedWorkTable.TypeOfAirport, plannedWorkTable.DetailsOfWorks, plannedWorkTable.WorkSteps));
+                plannedWorks.Add(new PlannedWork(plannedWorkTable.IdCurrentWork, plannedWorkTable.Airport, plannedWorkTable.TypeOfAirport, plannedWorkTable.DetailsOfWorks, plannedWorkTable.WorkSteps, plannedWorkTable.DateOfRepairWork));
             }
             return plannedWorks;
         }
-
-    }*/
-    public class HistoryService
-    {
-
     }
 }

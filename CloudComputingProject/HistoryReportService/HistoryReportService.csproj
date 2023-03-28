@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{CABA37B0-8CE3-4D3F-819C-AE318C351FB5}</ProjectGuid>
+    <ProjectGuid>{5AC7AD08-8255-4F61-9F01-0DE656DE90E4}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HistoryReportService</RootNamespace>

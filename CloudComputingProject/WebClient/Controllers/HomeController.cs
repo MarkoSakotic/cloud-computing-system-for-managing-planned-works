@@ -32,32 +32,31 @@ namespace WebClient.Controllers
         public async Task<IActionResult> About()
         {
             ViewData["About"] = null;
-            List<PlannedWork> currentWorks = new List<PlannedWork>();
+            List<PlannedWork> plannedWorks = new List<PlannedWork>();
 
-            var myBinding = new NetTcpBinding(SecurityMode.None);
-            var myEndpoint = new EndpointAddress("net.tcp://localhost:6001/HistoryWorkSaverEndpoint");
-
-            using (var myChannelFactory = new ChannelFactory<IHistoryService>(myBinding, myEndpoint))
+            try
             {
-                IHistoryService clientService = null;
-                try
+                FabricClient fabricClient1 = new FabricClient();
+                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/ReportWorkService"))).Count;
+                var binding1 = WcfUtility.CreateTcpClientBinding();
+                int index1 = 0;
+                for (int i = 0; i < partitionsNumber1; i++)
                 {
-                    clientService = myChannelFactory.CreateChannel();
-                    currentWorks = clientService.GetAllHistoryFromStorage();
-                    ((ICommunicationObject)clientService).Close();
-                    myChannelFactory.Close();
-
-                    return View(currentWorks);
+                    ServicePartitionClient<WcfCommunicationClient<IReportWorkService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IReportWorkService>>(
+                        new WcfCommunicationClientFactory<IReportWorkService>(clientBinding: binding1),
+                        new Uri("fabric:/CloudComputingProject/ReportWorkService"),
+                        new ServicePartitionKey(index1 % partitionsNumber1));
+                    plannedWorks = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.GetAllDataHistory());
+                    index1++;
                 }
-                catch
-                {
-                    (clientService as ICommunicationObject)?.Abort();
-
-                    ViewData["About"] = "Service is currently unavailable!";
-                    return View();
-                }
-
+                return View(plannedWorks);
             }
+            catch
+            {
+                ViewData["About"] = "Service is currently unavailable!";
+                return View();
+            }
+           
         }
 
 
@@ -68,7 +67,7 @@ namespace WebClient.Controllers
         {
             if (dateOfRepairWork <= DateTime.Now)
             {
-                ViewData["Title"] = "Date of reapire work can not be in past!";
+                ViewData["Title"] = "Date of repair work can not be in past!";
                 return View("Index");
             }
 
