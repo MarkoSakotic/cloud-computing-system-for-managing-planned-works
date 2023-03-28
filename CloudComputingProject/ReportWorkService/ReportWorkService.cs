@@ -8,8 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.Wcf;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Client;
 using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.WindowsAzure.Storage;
@@ -74,6 +77,9 @@ namespace ReportWorkService
             var CurrentReportActive = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
 
             await ReadFromTable();
+
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+            await SendDataToCoordinator(cancellationToken);
 
             while (true)
             {
@@ -163,6 +169,46 @@ namespace ReportWorkService
             catch
             {
                 ServiceEventSource.Current.Message("There is no created cloud!");
+            }
+        }
+
+        public async Task SendDataToCoordinator(CancellationToken cancellationToken)
+        {
+            try
+            {
+                bool tempPublish = false;
+                List<PlannedWork> plannedWorks = new List<PlannedWork>();
+                var CurrentWorkDict = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, PlannedWork>>("CurrentReportActiveData");
+                using (var tx = this.StateManager.CreateTransaction())
+                {
+                    var enumerator = (await CurrentWorkDict.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+                    while (await enumerator.MoveNextAsync(new System.Threading.CancellationToken()))
+                    {
+                        plannedWorks.Add(enumerator.Current.Value);
+                    }
+                }
+                FabricClient fabricClient1 = new FabricClient();
+                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/PubSubReport"))).Count;
+                var binding1 = WcfUtility.CreateTcpClientBinding();
+                int index1 = 0;
+                for (int i = 0; i < partitionsNumber1; i++)
+                {
+                    ServicePartitionClient<WcfCommunicationClient<IPubSubService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IPubSubService>>(
+                        new WcfCommunicationClientFactory<IPubSubService>(clientBinding: binding1),
+                        new Uri("fabric:/CloudComputingProject/PubSubReport"),
+                        new ServicePartitionKey(index1 % partitionsNumber1));
+                    while (!tempPublish)
+                    {
+                        tempPublish = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.PubActive(plannedWorks));
+                        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                    }
+                    index1++;
+                }
+            }
+            catch (Exception e)
+            {
+                string err = e.Message;
+                ServiceEventSource.Current.Message(err);
             }
         }
     }

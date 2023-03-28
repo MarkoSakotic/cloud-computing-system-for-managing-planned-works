@@ -37,16 +37,16 @@ namespace WebClient.Controllers
             try
             {
                 FabricClient fabricClient1 = new FabricClient();
-                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/ReportWorkService"))).Count;
+                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/PubSubReport"))).Count;
                 var binding1 = WcfUtility.CreateTcpClientBinding();
                 int index1 = 0;
                 for (int i = 0; i < partitionsNumber1; i++)
                 {
-                    ServicePartitionClient<WcfCommunicationClient<IReportWorkService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IReportWorkService>>(
-                        new WcfCommunicationClientFactory<IReportWorkService>(clientBinding: binding1),
-                        new Uri("fabric:/CloudComputingProject/ReportWorkService"),
+                    ServicePartitionClient<WcfCommunicationClient<IPubSubService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IPubSubService>>(
+                        new WcfCommunicationClientFactory<IPubSubService>(clientBinding: binding1),
+                        new Uri("fabric:/CloudComputingProject/PubSubReport"),
                         new ServicePartitionKey(index1 % partitionsNumber1));
-                    plannedWorks = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.GetAllDataHistory());
+                    plannedWorks = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.GetHistoryData());
                     index1++;
                 }
                 return View(plannedWorks);
@@ -99,11 +99,14 @@ namespace WebClient.Controllers
 
                 return View("Index");
             }
-            catch
+            
+            catch (Exception e)
             {
+                
                 ViewData["Title"] = "New planned work NOT added successfully!";
                 return View("Index");
             }
+           
             
         }
 
@@ -116,16 +119,16 @@ namespace WebClient.Controllers
             try
             {
                 FabricClient fabricClient1 = new FabricClient();
-                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/ReportWorkService"))).Count;
+                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/PubSubReport"))).Count;
                 var binding1 = WcfUtility.CreateTcpClientBinding();
                 int index1 = 0;
                 for (int i = 0; i < partitionsNumber1; i++)
                 {
-                    ServicePartitionClient<WcfCommunicationClient<IReportWorkService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IReportWorkService>>(
-                        new WcfCommunicationClientFactory<IReportWorkService>(clientBinding: binding1),
-                        new Uri("fabric:/CloudComputingProject/ReportWorkService"),
+                    ServicePartitionClient<WcfCommunicationClient<IPubSubService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IPubSubService>>(
+                        new WcfCommunicationClientFactory<IPubSubService>(clientBinding: binding1),
+                        new Uri("fabric:/CloudComputingProject/PubSubReport"),
                         new ServicePartitionKey(index1 % partitionsNumber1));
-                    plannedWorks = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.GetAllData());
+                    plannedWorks = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.GetActiveData());
                     index1++;
                 }
                 return View(plannedWorks);

@@ -67,6 +67,10 @@ namespace HistoryReportService
             // TODO: Replace the following sample code with your own logic 
             //       or remove this RunAsync override if it's not needed in your service.
 
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+            await SendDataToCoordinator(cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+
             long iterations = 0;
 
             while (true)
@@ -127,7 +131,20 @@ namespace HistoryReportService
                         index2++;
                     }
 
-
+                    List<PlannedWork> historyData = GetAllHistoricalData();
+                    FabricClient fabricClient1 = new FabricClient();
+                    int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/PubSubReport"))).Count;
+                    var binding1 = WcfUtility.CreateTcpClientBinding();
+                    int index1 = 0;
+                    for (int i = 0; i < partitionsNumber1; i++)
+                    {
+                        ServicePartitionClient<WcfCommunicationClient<IPubSubService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IPubSubService>>(
+                            new WcfCommunicationClientFactory<IPubSubService>(clientBinding: binding1),
+                            new Uri("fabric:/CloudComputingProject/PubSubReport"),
+                            new ServicePartitionKey(index1 % partitionsNumber1));
+                        bool tempPublish = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.PubHistory(historyData));
+                        index1++;
+                    }
                 }
                 catch
                 {
@@ -135,6 +152,65 @@ namespace HistoryReportService
                 }
             }
             return true;
+        }
+
+
+        public List<PlannedWork> GetAllHistoricalData()
+        {
+            List<PlannedWork> currentWorks = new List<PlannedWork>();
+            try
+            {
+                CloudStorageAccount _storageAccount;
+                CloudTable _table;
+                string a = ConfigurationManager.AppSettings["DataConnectionString"];
+                _storageAccount = CloudStorageAccount.Parse(a);
+                CloudTableClient tableClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
+                _table = tableClient.GetTableReference("WorkDataStorage");
+                var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentWorkData" && pwt.ArchivedData select pwt;
+                foreach (PlannedWorkTable currentWorkEntity in results.ToList())
+                {
+                    currentWorks.Add(new PlannedWork(currentWorkEntity.RowKey, currentWorkEntity.Airport, currentWorkEntity.TypeOfAirport, currentWorkEntity.DetailsOfWorks, currentWorkEntity.WorkSteps, currentWorkEntity.DateOfRepairWork));
+                }
+            }
+            catch (Exception e)
+            {
+                string err = e.Message;
+                ServiceEventSource.Current.Message(err);
+            }
+            return currentWorks;
+        }
+
+        
+        public async Task SendDataToCoordinator(CancellationToken cancellationToken)
+        {
+            try
+            {
+                bool tempPublish = false;
+                List<PlannedWork> currentWorks = GetAllHistoricalData();
+                FabricClient fabricClient1 = new FabricClient();
+                int partitionsNumber1 = (await fabricClient1.QueryManager.GetPartitionListAsync(new Uri("fabric:/CloudComputingProject/PubSubReport"))).Count;
+                var binding1 = WcfUtility.CreateTcpClientBinding();
+                int index1 = 0;
+                for (int i = 0; i < partitionsNumber1; i++)
+                {
+                    ServicePartitionClient<WcfCommunicationClient<IPubSubService>> servicePartitionClient1 = new ServicePartitionClient<WcfCommunicationClient<IPubSubService>>(
+                        new WcfCommunicationClientFactory<IPubSubService>(clientBinding: binding1),
+                        new Uri("fabric:/CloudComputingProject/PubSubReport"),
+                        new ServicePartitionKey(index1 % partitionsNumber1));
+                    while (!tempPublish)
+                    {
+                        tempPublish = await servicePartitionClient1.InvokeWithRetryAsync(client => client.Channel.PubHistory(currentWorks));
+                        await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+                    }
+                    index1++;
+                }
+            }
+            catch (Exception e)
+            {
+                string err = e.Message;
+                ServiceEventSource.Current.Message(err);
+            }
+
         }
     }
 }

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IHistoryService.cs" />
+    <Compile Include="IPubSubService.cs" />
     <Compile Include="IReportWorkService.cs" />
     <Compile Include="PlannedWork.cs" />
     <Compile Include="PlannedWorkTable.cs" />
