@@ -66,6 +66,11 @@ namespace WebClient.Controllers
         [Route("/HomeController/AddPlannedWork")]
         public async Task<IActionResult> AddPlannedWork(string idCurrentWork, string airport, string typeOfAirport, string detailsOfWorks, string workSteps, DateTime dateOfRepairWork)
         {
+            if (dateOfRepairWork <= DateTime.Now)
+            {
+                ViewData["Title"] = "Date of reapire work can not be in past!";
+                return View("Index");
+            }
 
             try
             {
@@ -86,18 +91,18 @@ namespace WebClient.Controllers
 
                 if (result)
                 {
-                    ViewData["Title"] = "New work ADDED successfully!";
+                    ViewData["Title"] = "New planned work ADDED successfully!";
                 }
                 else
                 {
-                    ViewData["Title"] = "New work NOT added successfully!";
+                    ViewData["Title"] = "New planned work NOT added successfully!";
                 }
 
                 return View("Index");
             }
             catch
             {
-                ViewData["Title"] = "New work NOT added successfully!";
+                ViewData["Title"] = "New planned work NOT added successfully!";
                 return View("Index");
             }
             

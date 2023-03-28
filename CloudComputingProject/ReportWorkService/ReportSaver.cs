@@ -63,7 +63,10 @@ namespace ReportWorkService
                 var enumerator = (await CurrentReportDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
                 while (await enumerator.MoveNextAsync(new System.Threading.CancellationToken()))
                 {
-                    await CurrentReportDictionary.TryRemoveAsync(tx, enumerator.Current.Key);
+                    if (enumerator.Current.Value.DateOfRepairWork < DateTime.Now)
+                    {
+                        await CurrentReportDictionary.TryRemoveAsync(tx, enumerator.Current.Key);
+                    }
                 }
                 await tx.CommitAsync();
             }
@@ -82,7 +85,10 @@ namespace ReportWorkService
                 var enumerator = (await CurrentReportDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
                 while (await enumerator.MoveNextAsync(new System.Threading.CancellationToken()))
                 {
-                    plannedWorks.Add(enumerator.Current.Value);
+                    if (enumerator.Current.Value.DateOfRepairWork < DateTime.Now)
+                    {
+                        plannedWorks.Add(enumerator.Current.Value);
+                    }
                 }
             }
 
