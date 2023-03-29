@@ -166,7 +166,7 @@ namespace HistoryReportService
                 _storageAccount = CloudStorageAccount.Parse(a);
                 CloudTableClient tableClient = new CloudTableClient(new Uri(_storageAccount.TableEndpoint.AbsoluteUri), _storageAccount.Credentials);
                 _table = tableClient.GetTableReference("WorkDataStorage");
-                var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentWorkData" && pwt.ArchivedData select pwt;
+                var results = from pwt in _table.CreateQuery<PlannedWorkTable>() where pwt.PartitionKey == "CurrentPlannedWorkData" && pwt.ArchivedData select pwt;
                 foreach (PlannedWorkTable currentWorkEntity in results.ToList())
                 {
                     currentWorks.Add(new PlannedWork(currentWorkEntity.RowKey, currentWorkEntity.Airport, currentWorkEntity.TypeOfAirport, currentWorkEntity.DetailsOfWorks, currentWorkEntity.WorkSteps, currentWorkEntity.DateOfRepairWork));
