@@ -3,7 +3,7 @@ Cloud computing in infrastructure systems - System for managing planned works (o
 
 
 ## Overview
-This is a cloud application, which is used to record planned works on airplanes. First, it is necessary to enter the work on the page for entering works. After that, the work is written to azure table storage. After that, the work appears in the summary with other works, in which it is located until the date for its repair has passed. After that, it is included in the historical summary.
+This is a cloud application, which is used to record planned works on airplanes. First, it is necessary to enter the work on the page for entering works. After that, the work is written to azure table storage. After that, the work appears in the summary with other works, in which it is located until the date for its repair has passed. After that, it is included in the historical summary. The integration with the email service has been arranged, so that based on the received email, a new work can be entered into the table. Also, there is a Pub/Sub service.
 <br>
 Used C# programming language, .NET Framework, Azure table storage for database, MVC pattern, which is also used for frontend.
 
